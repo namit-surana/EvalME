@@ -1,0 +1,49 @@
+# CodeRabbit Configuration
+# This file configures CodeRabbit's behavior for code reviews
+
+language: javascript
+reviewers:
+  - type: code_rabbit
+    name: CodeRabbit AI
+    min_approvals: 1
+
+# Paths to include/exclude from review
+paths:
+  include:
+    - "src/**/*"
+    - "*.js"
+    - "*.jsx"
+    - "*.json"
+  exclude:
+    - "node_modules/**"
+    - "dist/**"
+    - "*.lock"
+
+# Review settings
+reviews:
+  # Enable reviews for pull requests
+  pull_requests:
+    enabled: true
+    # Review all files, not just changed ones
+    review_all_files: false
+    # Review only changed lines
+    review_only_changed_lines: true
+  
+  # Code quality checks
+  code_quality:
+    enabled: true
+    check_complexity: true
+    check_security: true
+    check_performance: true
+  
+  # Suggestions
+  suggestions:
+    enabled: true
+    min_confidence: 0.7
+
+# Chat settings
+chat:
+  enabled: true
+  # Allow asking questions about the codebase
+  codebase_questions: true
+
