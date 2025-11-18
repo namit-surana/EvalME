@@ -7,11 +7,15 @@ function App() {
   const [currentScreen, setCurrentScreen] = useState('upload'); // 'upload' or 'results'
   const [answerSheetPreview, setAnswerSheetPreview] = useState(null);
   const [modelAnswerPreview, setModelAnswerPreview] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState(null); // Store uploaded files
 
   const handleSubmit = async (files) => {
     try {
+      // Store uploaded files for display
+      setUploadedFiles(files);
+
       // TODO: Replace with your actual API URL
-      const API_URL = process.env.VITE_API_URL || 'http://localhost:8000/api/evaluate';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/evaluate';
       
       // Use mock API for now - replace with actual API call when ready
       // const response = await submitEvaluation(API_URL, files.answerPaper, files.modelAnswerPaper, files.questionPaper);
@@ -33,6 +37,7 @@ function App() {
     setCurrentScreen('upload');
     setAnswerSheetPreview(null);
     setModelAnswerPreview(null);
+    setUploadedFiles(null);
   };
 
   return (
@@ -41,6 +46,7 @@ function App() {
         <UploadScreen onSubmit={handleSubmit} />
       ) : (
         <ResultsScreen
+          answerPaperFile={uploadedFiles?.answerPaper}
           answerSheetPreview={answerSheetPreview}
           modelAnswerPreview={modelAnswerPreview}
           onBack={handleBack}

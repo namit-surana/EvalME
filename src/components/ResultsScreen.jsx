@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import PDFViewer from './PDFViewer';
 
-const ResultsScreen = ({ answerSheetPreview, modelAnswerPreview, onBack }) => {
+const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview, onBack }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
       {/* Animated background elements */}
@@ -30,33 +31,24 @@ const ResultsScreen = ({ answerSheetPreview, modelAnswerPreview, onBack }) => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto p-4 md:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          {/* Left Panel - Answer Sheet Preview */}
-          <div className="glass rounded-2xl shadow-2xl p-6 md:p-8 backdrop-blur-xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+      <div className="relative z-10 max-w-7xl mx-auto p-4 md:p-8" style={{ minHeight: 'calc(100vh - 120px)' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-6 md:gap-8 h-full">
+          {/* Left Panel - Answer Paper PDF */}
+          <div className="glass rounded-2xl shadow-2xl p-4 md:p-6 backdrop-blur-xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300 flex flex-col">
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10 flex-shrink-0">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-200">Answer Sheet Preview</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-200">Answer Paper PDF</h2>
             </div>
-            <div className="prose prose-invert prose-headings:text-gray-200 prose-p:text-gray-300 prose-strong:text-cyan-400 prose-code:text-purple-400 prose-pre:bg-gray-800 max-w-none overflow-auto max-h-[calc(100vh-250px)] custom-scrollbar">
-              {answerSheetPreview ? (
-                <ReactMarkdown>{answerSheetPreview}</ReactMarkdown>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                  <svg className="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <p>No preview available</p>
-                </div>
-              )}
+            <div className="w-full flex-1" style={{ minHeight: '70vh', display: 'flex', flexDirection: 'column' }}>
+              <PDFViewer file={answerPaperFile} />
             </div>
           </div>
 
-          {/* Right Panel - Model Answer Preview */}
+          {/* Right Panel - API Output */}
           <div className="glass rounded-2xl shadow-2xl p-6 md:p-8 backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
@@ -64,17 +56,18 @@ const ResultsScreen = ({ answerSheetPreview, modelAnswerPreview, onBack }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-200">Model Answer Preview</h2>
+              <h2 className="text-2xl font-bold text-gray-200">Evaluation Results</h2>
             </div>
             <div className="prose prose-invert prose-headings:text-gray-200 prose-p:text-gray-300 prose-strong:text-purple-400 prose-code:text-cyan-400 prose-pre:bg-gray-800 max-w-none overflow-auto max-h-[calc(100vh-250px)] custom-scrollbar">
               {modelAnswerPreview ? (
                 <ReactMarkdown>{modelAnswerPreview}</ReactMarkdown>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                  <svg className="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-16 h-16 mb-4 opacity-50 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p>No preview available</p>
+                  <p className="text-center">Waiting for API response...</p>
+                  <p className="text-sm text-gray-400 mt-2">API will be integrated tomorrow</p>
                 </div>
               )}
             </div>

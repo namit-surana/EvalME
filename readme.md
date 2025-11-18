@@ -2,6 +2,8 @@
 
 A React.js application with Tailwind CSS for evaluating answer sheets by comparing them with model answers.
 
+> **Note:** CodeRabbit is configured for automated code reviews.
+
 ## Features
 
 - **Upload Screen**: Upload three PDF files (Answer Paper, Model Answer Paper, and Question Paper)
