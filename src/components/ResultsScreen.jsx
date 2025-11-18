@@ -2,22 +2,45 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import PDFViewer from './PDFViewer';
 import ModelAnswerViewer from './ModelAnswerViewer';
+import HandwrittenRecognitionViewer from './HandwrittenRecognitionViewer';
 
 const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview, onBack }) => {
-  // Try to parse modelAnswerPreview as JSON if it's a string
+  // Parse modelAnswerPreview - it could be:
+  // 1. Handwritten recognition results (text or object) - PRIMARY USE CASE
+  // 2. Model answer JSON (for comparison) - SECONDARY, only if explicitly has quiz_number/answers structure
+  let recognitionData = null;
   let modelAnswerData = null;
+  
   if (modelAnswerPreview) {
     try {
-      // If it's already an object, use it directly
+      // If it's already an object, check what type it is
       if (typeof modelAnswerPreview === 'object') {
-        modelAnswerData = modelAnswerPreview;
-      } else {
-        // If it's a string, try to parse it as JSON
-        modelAnswerData = JSON.parse(modelAnswerPreview);
+        // Only treat as model answer if it has the specific model answer structure
+        // Otherwise, treat as recognition data (handwritten recognition results)
+        if (modelAnswerPreview.quiz_number && modelAnswerPreview.answers) {
+          modelAnswerData = modelAnswerPreview;
+        } else {
+          // Default: treat as recognition data (handwritten recognition)
+          recognitionData = modelAnswerPreview;
+        }
+      } else if (typeof modelAnswerPreview === 'string') {
+        // If it's a string, try to parse as JSON
+        try {
+          const parsed = JSON.parse(modelAnswerPreview);
+          // Only treat as model answer if it has the specific structure
+          if (parsed.quiz_number && parsed.answers) {
+            modelAnswerData = parsed;
+          } else {
+            recognitionData = parsed;
+          }
+        } catch (parseError) {
+          // If parsing fails, treat as plain text (recognition result)
+          recognitionData = modelAnswerPreview;
+        }
       }
     } catch (e) {
-      // If parsing fails, treat it as markdown
-      modelAnswerData = null;
+      // If anything fails, treat as plain text (recognition result)
+      recognitionData = modelAnswerPreview;
     }
   }
   return (
@@ -73,17 +96,14 @@ const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-200">Evaluation Results</h2>
+              <h2 className="text-2xl font-bold text-gray-200">Handwritten Recognition</h2>
             </div>
             <div className="max-w-none overflow-auto max-h-[calc(100vh-250px)] custom-scrollbar">
+              {/* Always show HandwrittenRecognitionViewer unless we explicitly have model answer data */}
               {modelAnswerData ? (
                 <ModelAnswerViewer modelAnswerData={modelAnswerData} />
-              ) : modelAnswerPreview ? (
-                <div className="prose prose-invert prose-headings:text-gray-200 prose-p:text-gray-300 prose-strong:text-purple-400 prose-code:text-cyan-400 prose-pre:bg-gray-800 max-w-none">
-                  <ReactMarkdown>{modelAnswerPreview}</ReactMarkdown>
-                </div>
               ) : (
-                <ModelAnswerViewer modelAnswerData={null} />
+                <HandwrittenRecognitionViewer recognitionData={recognitionData || null} />
               )}
             </div>
           </div>
