@@ -1,13 +1,15 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
 import PDFViewer from './PDFViewer';
 import ModelAnswerViewer from './ModelAnswerViewer';
 import HandwrittenRecognitionViewer from './HandwrittenRecognitionViewer';
+import EvaluationResultsViewer from './EvaluationResultsViewer';
 
 const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview, onBack }) => {
   // Parse modelAnswerPreview - it could be:
-  // 1. Handwritten recognition results (text or object) - PRIMARY USE CASE
-  // 2. Model answer JSON (for comparison) - SECONDARY, only if explicitly has quiz_number/answers structure
+  // 1. Evaluation results from API (has evaluation.results) - PRIMARY USE CASE
+  // 2. Model answer JSON (for comparison) - has quiz_number/answers structure
+  // 3. Handwritten recognition results (text or object) - fallback
+  let evaluationData = null;
   let recognitionData = null;
   let modelAnswerData = null;
   
@@ -15,9 +17,12 @@ const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview
     try {
       // If it's already an object, check what type it is
       if (typeof modelAnswerPreview === 'object') {
-        // Only treat as model answer if it has the specific model answer structure
-        // Otherwise, treat as recognition data (handwritten recognition results)
-        if (modelAnswerPreview.quiz_number && modelAnswerPreview.answers) {
+        // Check if it's evaluation results (has evaluation.results)
+        if (modelAnswerPreview.evaluation && modelAnswerPreview.evaluation.results) {
+          evaluationData = modelAnswerPreview;
+        }
+        // Check if it's a model answer (has quiz_number and answers)
+        else if (modelAnswerPreview.quiz_number && modelAnswerPreview.answers) {
           modelAnswerData = modelAnswerPreview;
         } else {
           // Default: treat as recognition data (handwritten recognition)
@@ -27,8 +32,12 @@ const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview
         // If it's a string, try to parse as JSON
         try {
           const parsed = JSON.parse(modelAnswerPreview);
-          // Only treat as model answer if it has the specific structure
-          if (parsed.quiz_number && parsed.answers) {
+          // Check evaluation results first
+          if (parsed.evaluation && parsed.evaluation.results) {
+            evaluationData = parsed;
+          }
+          // Check model answer structure
+          else if (parsed.quiz_number && parsed.answers) {
             modelAnswerData = parsed;
           } else {
             recognitionData = parsed;
@@ -96,11 +105,15 @@ const ResultsScreen = ({ answerPaperFile, answerSheetPreview, modelAnswerPreview
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-200">Handwritten Recognition</h2>
+              <h2 className="text-2xl font-bold text-gray-200">
+                {evaluationData ? 'Evaluation Results' : 'Handwritten Recognition'}
+              </h2>
             </div>
             <div className="max-w-none overflow-auto max-h-[calc(100vh-250px)] custom-scrollbar">
-              {/* Always show HandwrittenRecognitionViewer unless we explicitly have model answer data */}
-              {modelAnswerData ? (
+              {/* Priority: Evaluation Results > Model Answer > Handwritten Recognition */}
+              {evaluationData ? (
+                <EvaluationResultsViewer evaluationData={evaluationData} />
+              ) : modelAnswerData ? (
                 <ModelAnswerViewer modelAnswerData={modelAnswerData} />
               ) : (
                 <HandwrittenRecognitionViewer recognitionData={recognitionData || null} />

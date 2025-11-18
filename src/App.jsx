@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import UploadScreen from './components/UploadScreen';
 import ResultsScreen from './components/ResultsScreen';
-import { submitEvaluation, mockSubmitEvaluation } from './services/api';
+import { submitEvaluation } from './services/api';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('upload'); // 'upload' or 'results'
@@ -14,22 +14,28 @@ function App() {
       // Store uploaded files for display
       setUploadedFiles(files);
 
-      // TODO: Replace with your actual API URL
+      // API URL - can be set via environment variable or defaults to localhost
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/evaluate';
       
-      // Use mock API for now - replace with actual API call when ready
-      // const response = await submitEvaluation(API_URL, files.answerPaper, files.modelAnswerPaper, files.questionPaper);
-      const response = await mockSubmitEvaluation(files.answerPaper, null, null); // files.modelAnswerPaper, files.questionPaper);
+      // Call the actual API
+      const response = await submitEvaluation(
+        API_URL,
+        files.answerPaper,
+        files.modelAnswerPaper || null,
+        files.questionPaper || null
+      );
 
-      // Parse the markdown JSON response
-      // Assuming the API returns: { answerSheetPreview: "...", modelAnswerPreview: "..." }
-      setAnswerSheetPreview(response.answerSheetPreview || response.answerSheet || '');
-      setModelAnswerPreview(response.modelAnswerPreview || response.modelAnswer || '');
+      // The API returns evaluation results directly
+      // Store the full response for the evaluation viewer
+      setModelAnswerPreview(response);
+      
+      // For backward compatibility, also set answerSheetPreview
+      setAnswerSheetPreview(response.student_file || '');
       
       setCurrentScreen('results');
     } catch (error) {
       console.error('Error processing files:', error);
-      alert('Failed to process files. Please check the console for details.');
+      alert(`Failed to process files: ${error.message}\n\nPlease check:\n1. The API server is running at ${import.meta.env.VITE_API_URL || 'http://localhost:8000'}\n2. The endpoint is accessible\n3. Check the console for more details.`);
     }
   };
 

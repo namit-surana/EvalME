@@ -1,17 +1,23 @@
 /**
  * API service for handling file uploads and fetching evaluation results
  * 
- * @param {string} apiUrl - The API endpoint URL
+ * @param {string} apiUrl - The API endpoint URL (default: http://localhost:8000/api/evaluate)
  * @param {File} answerPaper - The answer paper PDF file
- * @param {File} modelAnswerPaper - The model answer paper PDF file
- * @param {File} questionPaper - The question paper PDF file
- * @returns {Promise<Object>} - Returns the API response in markdown JSON format
+ * @param {File} modelAnswerPaper - The model answer paper PDF file (optional)
+ * @param {File} questionPaper - The question paper PDF file (optional)
+ * @returns {Promise<Object>} - Returns the API response with evaluation results
  */
-export const submitEvaluation = async (apiUrl, answerPaper, modelAnswerPaper, questionPaper) => {
+export const submitEvaluation = async (apiUrl, answerPaper, modelAnswerPaper = null, questionPaper = null) => {
   const formData = new FormData();
   formData.append('answerPaper', answerPaper);
-  formData.append('modelAnswerPaper', modelAnswerPaper);
-  formData.append('questionPaper', questionPaper);
+  
+  // Only append if files are provided
+  if (modelAnswerPaper) {
+    formData.append('modelAnswerPaper', modelAnswerPaper);
+  }
+  if (questionPaper) {
+    formData.append('questionPaper', questionPaper);
+  }
 
   try {
     const response = await fetch(apiUrl, {
@@ -20,10 +26,17 @@ export const submitEvaluation = async (apiUrl, answerPaper, modelAnswerPaper, qu
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
+    
+    // Validate response structure
+    if (!data.success) {
+      throw new Error('API returned unsuccessful response');
+    }
+
     return data;
   } catch (error) {
     console.error('API call failed:', error);

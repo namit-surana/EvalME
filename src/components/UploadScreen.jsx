@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 const UploadScreen = ({ onSubmit }) => {
   const [answerPaper, setAnswerPaper] = useState(null);
-  // const [modelAnswerPaper, setModelAnswerPaper] = useState(null);
-  // const [questionPaper, setQuestionPaper] = useState(null);
+  const [modelAnswerPaper, setModelAnswerPaper] = useState(null);
+  const [questionPaper, setQuestionPaper] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFileChange = (type, file) => {
@@ -12,12 +12,12 @@ const UploadScreen = ({ onSubmit }) => {
         case 'answer':
           setAnswerPaper(file);
           break;
-        // case 'model':
-        //   setModelAnswerPaper(file);
-        //   break;
-        // case 'question':
-        //   setQuestionPaper(file);
-        //   break;
+        case 'model':
+          setModelAnswerPaper(file);
+          break;
+        case 'question':
+          setQuestionPaper(file);
+          break;
         default:
           break;
       }
@@ -31,12 +31,12 @@ const UploadScreen = ({ onSubmit }) => {
         case 'answer':
           setAnswerPaper(null);
           break;
-        // case 'model':
-        //   setModelAnswerPaper(null);
-        //   break;
-        // case 'question':
-        //   setQuestionPaper(null);
-        //   break;
+        case 'model':
+          setModelAnswerPaper(null);
+          break;
+        case 'question':
+          setQuestionPaper(null);
+          break;
         default:
           break;
       }
@@ -52,8 +52,8 @@ const UploadScreen = ({ onSubmit }) => {
     try {
       await onSubmit({
         answerPaper,
-        // modelAnswerPaper,
-        // questionPaper,
+        modelAnswerPaper,
+        questionPaper,
       });
     } catch (error) {
       console.error('Error submitting files:', error);
@@ -162,7 +162,7 @@ const UploadScreen = ({ onSubmit }) => {
     </div>
   );
 
-  const allFilesUploaded = answerPaper; // && modelAnswerPaper && questionPaper;
+  const allFilesUploaded = answerPaper; // Answer paper is required, others are optional
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -192,7 +192,7 @@ const UploadScreen = ({ onSubmit }) => {
         {/* Main Card */}
         <div className="glass rounded-3xl shadow-2xl p-8 md:p-12 backdrop-blur-xl">
           <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <FileUploadButton
                 label="Answer Paper PDF"
                 type="answer"
@@ -201,7 +201,7 @@ const UploadScreen = ({ onSubmit }) => {
                 onRemove={handleRemoveFile}
                 gradient="from-cyan-500 to-blue-500"
               />
-              {/* <FileUploadButton
+              <FileUploadButton
                 label="Model Answer PDF"
                 type="model"
                 file={modelAnswerPaper}
@@ -216,7 +216,7 @@ const UploadScreen = ({ onSubmit }) => {
                 onChange={handleFileChange}
                 onRemove={handleRemoveFile}
                 gradient="from-blue-500 to-cyan-500"
-              /> */}
+              />
             </div>
 
             {/* Submit Button */}
@@ -256,7 +256,7 @@ const UploadScreen = ({ onSubmit }) => {
 
         {/* Footer info */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Upload the Answer Paper PDF to begin evaluation</p>
+          <p>Upload the Answer Paper PDF (required) and optionally Model Answer & Question Paper PDFs</p>
         </div>
       </div>
     </div>
