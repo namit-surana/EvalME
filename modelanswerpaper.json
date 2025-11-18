@@ -1,0 +1,92 @@
+{
+  "quiz_number": 3,
+  "course": "ACCT GB 1306 - Financial Accounting",
+  "term": "Fall 2025",
+  "title": "Quiz #3 - Model Answer Paper",
+  "metadata": {
+    "company": "Othmer Company",
+    "inventory_system": "Periodic Inventory System",
+    "accounting_period_end": "December 31, 20X5",
+    "context": "At the end of the annual accounting period, the accounting records provided the following information for product 2."
+  },
+  "inventory_table": {
+    "columns": ["Item", "Units", "Unit Cost"],
+    "rows": [
+      { "item": "Inventory, December 31, 20X4", "units": 3, "unit_cost": 9 },
+      { "item": "Purchase, April 11", "units": 9, "unit_cost": 10 },
+      { "item": "Purchase, June 1", "units": 7, "unit_cost": 15 },
+      { "item": "Sales (50 units @ $10 each)", "units": 50, "unit_cost": 10 },
+      { "item": "Operating expenses (excluding income tax expense)", "units": null, "unit_cost": 190 }
+    ]
+  },
+  "answers": [
+    {
+      "id": 1,
+      "question": "Suppose Othmer Company uses FIFO for inventory valuation. What is the balance of the inventory account on December 31, 20X5?",
+      "solution": {
+        "method": "FIFO",
+        "workings": {
+          "total_units_available": 19,
+          "units_sold": 10,
+          "ending_units": 9,
+          "ending_inventory_composition": [
+            { "units": 2, "unit_cost": 10 },
+            { "units": 7, "unit_cost": 15 }
+          ],
+          "ending_inventory_value": 125
+        },
+        "final_answer": 125
+      }
+    },
+    {
+      "id": 2,
+      "question": "Suppose Othmer uses LIFO for inventory valuation. What is the gross profit (Sales – COGS) for 20X5?",
+      "solution": {
+        "method": "LIFO",
+        "workings": {
+          "units_sold": 10,
+          "COGS_composition": [
+            { "units": 7, "unit_cost": 15 },
+            { "units": 3, "unit_cost": 10 }
+          ],
+          "COGS": 165,
+          "sales_revenue": 100,
+          "gross_profit": -65
+        },
+        "final_answer": -65
+      }
+    },
+    {
+      "id": 3,
+      "question": "Compute the pretax income (earnings before tax) under the LIFO method.",
+      "solution": {
+        "method": "LIFO",
+        "workings": {
+          "gross_profit_from_Q2": -65,
+          "operating_expenses": 190,
+          "pretax_income": -255
+        },
+        "final_answer": -255
+      }
+    },
+    {
+      "id": 4,
+      "question": "Suppose Othmer uses FIFO for inventory valuation and a periodic inventory system. The NRV at December 31, 20X5 is $15 per unit. Using lower of cost or NRV, record any necessary adjustment to inventory and state the effect on net income.",
+      "solution": {
+        "method": "Lower of Cost or NRV (FIFO)",
+        "workings": {
+          "FIFO_cost_per_unit": 13.89,
+          "NRV_per_unit": 15,
+          "comparison": "Cost < NRV",
+          "adjustment_required": false,
+          "journal_entry": "No entry required",
+          "effect_on_net_income": "No Effect"
+        },
+        "final_answer": {
+          "inventory_adjustment": "No adjustment required",
+          "net_income_effect": "No Effect"
+        }
+      }
+    }
+  ]
+}
