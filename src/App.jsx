@@ -19,7 +19,7 @@ function App() {
       
       // Use mock API for now - replace with actual API call when ready
       // const response = await submitEvaluation(API_URL, files.answerPaper, files.modelAnswerPaper, files.questionPaper);
-      const response = await mockSubmitEvaluation(files.answerPaper, files.modelAnswerPaper, files.questionPaper);
+      const response = await mockSubmitEvaluation(files.answerPaper, null, null); // files.modelAnswerPaper, files.questionPaper);
 
       // Parse the markdown JSON response
       // Assuming the API returns: { answerSheetPreview: "...", modelAnswerPreview: "..." }
