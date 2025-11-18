@@ -34,15 +34,20 @@ export const submitEvaluation = async (apiUrl, answerPaper, modelAnswerPaper, qu
 /**
  * Mock API function for testing without a backend
  * Replace this with actual API call when backend is ready
+ * 
+ * The real API should return:
+ * {
+ *   modelAnswerPreview: <JSON object with quiz_number, course, term, title, metadata, inventory_table, answers>
+ * }
  */
 export const mockSubmitEvaluation = async (answerPaper, modelAnswerPaper, questionPaper) => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  // Return mock markdown JSON format
+  // Return empty/null - the real API will return the JSON after evaluating the handwritten PDF
   return {
-    answerSheetPreview: `# Answer Sheet Preview\n\n## Student Answers\n\n**Question 1:**\nThe student provided a comprehensive answer covering the main points.\n\n**Question 2:**\nThe answer demonstrates good understanding of the concepts.\n\n**Question 3:**\nSome areas need improvement in clarity and detail.`,
-    modelAnswerPreview: `# Model Answer Preview\n\n## Expected Answers\n\n**Question 1:**\nThe model answer should include:\n- Point A\n- Point B\n- Point C\n\n**Question 2:**\nKey concepts to cover:\n1. Concept 1\n2. Concept 2\n3. Concept 3\n\n**Question 3:**\nDetailed explanation with examples and references.`
+    answerSheetPreview: `# Answer Sheet Preview\n\n## Student Answers\n\nThe uploaded answer paper is displayed on the left side for review.`,
+    modelAnswerPreview: null // Real API will return the JSON object after evaluation
   };
 };
 
